@@ -33,7 +33,7 @@ void do_test_find(regex_t *regex, char *text)
 	int g, error, len, o;
 	char *buf, *pm = text;
 
-	buf = (char *)malloc(sizeof(char) * strlen(text));
+	buf = (char *)malloc(sizeof(char) * (strlen(text)+1));
 	while((error = tre_regexec(regex, pm, MATCHES, m, 0)) == 0
 		&& m[0].rm_so > -1)
 	{
