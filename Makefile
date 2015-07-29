@@ -1,7 +1,7 @@
 CC=g++
 SRCS=regina.cpp
 OBJS=$(SRCS:.cpp=.o)
-CFLAGS=-O2 -std=c90 -Wall 
+CFLAGS=-O2 -std=c90 -Wall
 LDFLAGS=-s -static -ltre `fltk-config --ldflags`
 ARCH=32
 ifeq ($(ARCH), 64)
@@ -16,7 +16,7 @@ EXE=$(NAME).exe
 all: $(EXE)
 $(EXE): $(OBJS) $(NAME).res
 	$(CC) -o $(EXE) $(OBJS) $(NAME).res -m$(ARCH) $(LDFLAGS)
-.c.o:
+.cpp.o:
 	$(CC) -o $@ $(CFLAGS) -m$(ARCH) -c $<
 
 $(NAME).res: $(NAME).rc

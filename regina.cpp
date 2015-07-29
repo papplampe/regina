@@ -12,13 +12,12 @@ static Fl_Text_Buffer *buf_test;
 static Fl_Text_Editor *edit_out;
 static Fl_Text_Buffer *buf_out;
 
-void do_test_match(regex_t *regex, char *text)
+void do_test_match(regex_t *regex, char *text, size_t textlen)
 {
 	regmatch_t m;
-	int error;
 
 	if(tre_regexec(regex, text, 1, &m, 0) == 0
-		&& m.rm_so == 0 && m.rm_eo == strlen(text)
+		&& m.rm_so == 0 && m.rm_eo == textlen
 	) {
 		buf_out->append("matches: yes\n");
 	} else {
@@ -26,15 +25,15 @@ void do_test_match(regex_t *regex, char *text)
 	}
 }
 
-void do_test_find(regex_t *regex, char *text)
+void do_test_find(regex_t *regex, char *text, size_t textlen)
 {
 	#define MATCHES 32
 	regmatch_t m[MATCHES];
-	int g, error, len, o;
+	int g, len, o;
 	char *buf, *pm = text;
 
-	buf = (char *)malloc(sizeof(char) * (strlen(text)+1));
-	while((error = tre_regexec(regex, pm, MATCHES, m, 0)) == 0
+	buf = (char *)malloc(sizeof(char) * textlen);
+	while(tre_regexec(regex, pm, MATCHES, m, 0) == 0
 		&& m[0].rm_so > -1)
 	{
 		o = pm - text;
@@ -77,8 +76,8 @@ void input_regex_callback(Fl_Widget*, void*)
 		return;
 	}
 	text = buf_test->text();
-	do_test_match(&regex, text);
-	do_test_find(&regex, text);
+	do_test_match(&regex, text, buf_test->length());
+	do_test_find(&regex, text, buf_test->length());
 	tre_regfree(&regex);
 	free(text);
 }
