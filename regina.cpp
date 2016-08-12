@@ -17,7 +17,7 @@ void do_test_match(regex_t *regex, char *text, size_t textlen)
 	regmatch_t m;
 
 	if(tre_regexec(regex, text, 1, &m, 0) == 0
-		&& m.rm_so == 0 && m.rm_eo == textlen
+		&& m.rm_so == 0 && (size_t)m.rm_eo == textlen
 	) {
 		buf_out->append("matches: yes\n");
 	} else {
