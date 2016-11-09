@@ -15,7 +15,6 @@ static Fl_Text_Buffer *buf_out;
 void do_test_match(regex_t *regex, char *text, size_t textlen)
 {
 	regmatch_t m;
-
 	if(tre_regexec(regex, text, 1, &m, 0) == 0
 		&& m.rm_so == 0 && (size_t)m.rm_eo == textlen
 	) {
@@ -29,14 +28,13 @@ void do_test_find(regex_t *regex, char *text, size_t textlen)
 {
 	#define MATCHES 32
 	regmatch_t m[MATCHES];
-	int g, len, o;
-	char *buf, *pm = text;
-
-	buf = (char *)malloc(sizeof(char) * textlen);
+	int len;
+	char *pm = text;
+	char *buf = (char *)malloc(sizeof(char) * textlen);
 	while(tre_regexec(regex, pm, MATCHES, m, 0) == 0
 		&& m[0].rm_so > -1)
 	{
-		o = pm - text;
+		int o = pm - text;
 		len = m[0].rm_eo - m[0].rm_so;
 		buf_out->append("find(");
 		buf_out->append(itoa(o + m[0].rm_so, buf, 10));
@@ -47,7 +45,7 @@ void do_test_find(regex_t *regex, char *text, size_t textlen)
 		buf[len] = 0;
 		buf_out->append(buf);
 		buf_out->append("\n");
-		for(g = 1; g < MATCHES && m[g].rm_so > -1; g++) {
+		for(int g = 1; g < MATCHES && m[g].rm_so > -1; g++) {
 			len = m[g].rm_eo - m[g].rm_so;
 			buf_out->append("  ");
 			buf_out->append(itoa(g, buf, 10));
@@ -64,18 +62,16 @@ void do_test_find(regex_t *regex, char *text, size_t textlen)
 
 void input_regex_callback(Fl_Widget*, void*)
 {
-	regex_t regex;
-	char *text;
-
 	if(input_regex->size() == 0) {
 		return;
 	}
 	buf_out->text("");
+	regex_t regex;
 	if(tre_regcomp(&regex, input_regex->value(), REG_EXTENDED|REG_NEWLINE) != 0) {
 		buf_out->append("regex is malformed\n");
 		return;
 	}
-	text = buf_test->text();
+	char *text = buf_test->text();
 	do_test_match(&regex, text, buf_test->length());
 	do_test_find(&regex, text, buf_test->length());
 	tre_regfree(&regex);
