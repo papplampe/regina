@@ -2,8 +2,8 @@ CC=g++
 SRCS=regina.cpp
 OBJS=$(SRCS:.cpp=.o)
 CFLAGS=-O2 -std=gnu++98 -Wall -fno-ident
-LDFLAGS=-s -static -ltre `fltk-config --ldflags`
-ARCH=32
+LDFLAGS=-s -static -flto -ltre `fltk-config --ldstaticflags` 
+ARCH=64
 ifeq ($(ARCH), 64)
 	WINDRES_ARCH=pe-x86-64
 else
